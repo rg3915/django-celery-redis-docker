@@ -1,0 +1,61 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    hostname: db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+  redis:
+    image: 'redis:alpine'
+    hostname: redis
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: app
+    stdin_open: true
+    # tty: true
+    expose:
+      - '8000'
+    volumes:
+      - .env:/app/.env
+    depends_on:
+      - redis
+      - db
+
+  nginx:
+    image: nginx
+    hostname: nginx
+    ports:
+      - '82:8000'
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "celery -A myproject worker -l info --queue=fila1"
+    depends_on:
+      - app
+      - redis
+      - db
+
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "celery -A myproject flower"
+    depends_on:
+      - celery
+
+volumes:
+  db-data:

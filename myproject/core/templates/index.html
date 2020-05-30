@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>Teste Django e Celery no Docker com Redis</h1>
+    <p>
+      <button id="id_btn" class="btn btn-primary btn-lg" type="button">
+        Clique aqui
+      </button>
+    </p>
+  </div>
+</div>
+
+<div class="text-center mt-5 pt-5">
+    <h1>Task Results</h1>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Task ID</th>
+          <th>Task Name</th>
+          <th>Completed Datetime</th>
+          <th>Task State</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for object in object_list %}
+          <tr>
+            <td>{{ object.task_id }}</td>
+            <td>{{ object.task_name }}</td>
+            <td>{{ object.date_done }}</td>
+            <td>{{ object.status }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+
+  <script>
+
+    $('#id_btn').on('click', function() {
+      let url = "{% url 'core:run_task' %}";
+      $.ajax({
+        url: url,
+        beforeSend: function(xhr) {
+          myNotifyWarning('iniciada...')
+        },
+        success: function(response) {
+        }
+      })
+    });
+
+    function myNotifyWarning(message) {
+      $.notify({
+        title: "<strong>Tarefa:</strong> ",
+        message: message
+      },{
+        type: "warning",
+        delay: 3000,
+        timer: 1000,
+      });
+    }
+
+    function myNotifySuccess(message) {
+      $.notify({
+        title: "<strong>Tarefa:</strong> ",
+        message: message
+      },{
+        delay: 3000,
+        timer: 1000,
+      });
+    }
+
+    function reload() {
+      setTimeout(function() {
+        location.reload();
+    }, 3200);
+    }
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var my_key = '{{ my_key }}'
+    var pusher = new Pusher(my_key, {
+      cluster: 'mt1',
+      forceTLS: true
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+      myNotifySuccess(data.message);
+      reload()
+    });
+  </script>
+
+{% endblock js %}
