@@ -1,8 +1,9 @@
 from decouple import config
-from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
 from django_celery_results.models import TaskResult
+
 from .tasks import print_numbers
 
 

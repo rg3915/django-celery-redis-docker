@@ -1,28 +1,30 @@
-#!/usr/bin/env python
+import random
 
-"""
-Django SECRET_KEY generator.
-"""
-from django.utils.crypto import get_random_string
+chars = "abcdefghijklmnopqrstuvwxyz01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()?"  # noqa E501
+size = 50
+secret_key = "".join(random.sample(chars, size))
 
-
-chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-password = 'abcdefghijklmnopqrstuvwxyz0123456789'
+chars = "abcdefghijklmnopqrstuvwxyz01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%_"
+size = 32
+password = "".join(random.sample(chars, size))
 
 CONFIG_STRING = """
 DEBUG=True
 SECRET_KEY=%s
-ALLOWED_HOSTS=127.0.0.1, .localhost
-DATABASE_NAME=django_celery_db
+ALLOWED_HOSTS=127.0.0.1, .localhost, 0.0.0.0
+DATABASE_NAME=db
 DATABASE_USER=myuser
-DATABASE_PASSWORD=%s
+POSTGRES_PASSWORD=%s
 DATABASE_HOST=localhost
-APP_ID=xyz
-KEY=xyz
-SECRET=xyz
-CLUSTER=xyz
-""".strip() % (get_random_string(50, chars), get_random_string(32, password))
+APP_ID=
+KEY=
+SECRET=
+CLUSTER=
+""".strip() % (secret_key, password)
 
 # Writing our configuration file to '.env'
 with open('.env', 'w') as configfile:
     configfile.write(CONFIG_STRING)
+
+print('Success!')
+print('Type: cat .env')

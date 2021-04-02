@@ -1,9 +1,9 @@
-import pusher
 import time
-from decouple import config
-from celery.utils.log import get_task_logger
-from celery import shared_task
 
+import pusher
+from celery import shared_task
+from celery.utils.log import get_task_logger
+from decouple import config
 
 logger = get_task_logger(__name__)
 

@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-from decouple import config, Csv
+
+from decouple import Csv, config
 from dj_database_url import parse as dburl
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -87,10 +88,11 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DATABASE_NAME'),
-        'USER': config('DATABASE_USER', 'postgres'),
-        'PASSWORD': config('DATABASE_PASSWORD', 'postgres'),
-        'HOST': config('DATABASE_HOST', 'localhost'),
+        'NAME': config('POSTGRES_DB'),
+        'USER': config('POSTGRES_USER', 'postgres'),
+        'PASSWORD': config('POSTGRES_PASSWORD', 'postgres'),
+        # é o nome do service 'db' no docker-compose.
+        'HOST': config('DB_HOST', 'db'),
         'PORT': '5432',
     }
 }

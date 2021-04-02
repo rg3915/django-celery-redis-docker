@@ -2,17 +2,20 @@ version: '3.7'
 
 services:
   db:
-    image: postgres:11-alpine
+    image: postgres:12-alpine
     restart: always
-    hostname: db
     volumes:
       - db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: postgres
+    env_file:
+      - .env
+    networks:
+      - live
 
   redis:
     image: 'redis:alpine'
     hostname: redis
+    networks:
+      - live
 
   app:
     build:
@@ -20,14 +23,16 @@ services:
       dockerfile: Dockerfile
     hostname: app
     stdin_open: true
-    # tty: true
     expose:
       - '8000'
     volumes:
       - .env:/app/.env
+    command: bash -c "python manage.py migrate && gunicorn myproject.wsgi:application -b 0.0.0.0:8000"
     depends_on:
       - redis
       - db
+    networks:
+      - live
 
   nginx:
     image: nginx
@@ -38,6 +43,8 @@ services:
       - ./config/nginx:/etc/nginx/conf.d
     depends_on:
       - app
+    networks:
+      - live
 
   celery:
     build:
@@ -48,14 +55,24 @@ services:
       - app
       - redis
       - db
+    restart: on-failure
+    networks:
+      - live
 
   flower:
     build:
       context: .
       dockerfile: Dockerfile
-    command: "celery -A myproject flower"
+    ports:
+      - '5555:5555'
+    command: "celery -A myproject flower --address=0.0.0.0"
     depends_on:
       - celery
+    networks:
+      - live
 
 volumes:
   db-data:
+
+networks:
+  live:
