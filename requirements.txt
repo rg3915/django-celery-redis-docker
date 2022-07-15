@@ -1,7 +1,7 @@
 celery==4.4.2
 dj-database-url==0.5.0
 dj-static==0.0.6
-django-celery-results==1.2.1
+django-celery-results==2.4.0
 django-extensions==3.1.0
 Django==2.2.21
 flower==0.9.7
