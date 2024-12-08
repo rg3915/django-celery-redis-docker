@@ -88,12 +88,12 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('POSTGRES_DB'),
+        'NAME': config('POSTGRES_DB', 'django_celery_db'),
         'USER': config('POSTGRES_USER', 'postgres'),
         'PASSWORD': config('POSTGRES_PASSWORD', 'postgres'),
         # é o nome do service 'db' no docker-compose.
         'HOST': config('DB_HOST', 'db'),
-        'PORT': '5432',
+        'PORT': config('DB_PORT', '5432'),
     }
 }
 
@@ -131,7 +131,7 @@ USE_L10N = True
 USE_TZ = True
 
 # My config
-USE_DOCKER = True
+USE_DOCKER = False
 
 # CELERY
 if USE_DOCKER:
