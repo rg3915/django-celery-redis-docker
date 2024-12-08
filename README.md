@@ -56,7 +56,7 @@ Mas o `queue` define uma fila.
 
 ```
 # terminal 1
-celery --app=myproject worker --loglevel=INFO --queue=fila1
+celery --app=myproject worker --loglevel=INFO --queues=fila1
 ```
 
 ## Experimentando o flower
