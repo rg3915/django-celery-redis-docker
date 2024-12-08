@@ -11,7 +11,12 @@ def index(request):
     template_name = 'index.html'
     object_list = TaskResult.objects.all()
     my_key = config('KEY')
-    context = {'object_list': object_list, 'my_key': my_key}
+    cluster = config('CLUSTER')
+    context = {
+        'object_list': object_list,
+        'my_key': my_key,
+        'cluster': cluster,
+    }
     return render(request, template_name, context)
 
 
