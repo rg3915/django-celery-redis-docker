@@ -4,16 +4,24 @@ services:
   db:
     image: postgres:16-alpine
     restart: always
+    user: postgres  # importante definir o usuário
     volumes:
-      - db-data:/var/lib/postgresql/data
-    env_file:
-      - .env
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - LC_ALL=C.UTF-8
+      - POSTGRES_PASSWORD=postgres  # senha padrão
+      - POSTGRES_USER=postgres  # usuário padrão
+      - POSTGRES_DB=django_celery_db  # necessário porque foi configurado assim no settings
+    ports:
+      - 5433:5432  # repare na porta externa 5433
     networks:
       - live
 
   redis:
     image: 'redis:alpine'
     hostname: redis
+    ports:
+      - 6379:6379
     networks:
       - live
 
@@ -72,7 +80,7 @@ services:
       - live
 
 volumes:
-  db-data:
+  pgdata:
 
 networks:
   live:
